@@ -48,8 +48,5 @@ if __name__ == '__main__':
 
     for i in range(100):
         plotter.data_queue.put(np.random.rand(3))
-
-    while not plotter.data_queue.empty():
         time.sleep(0.1)
 
-    plotter.kill()

@@ -37,14 +37,20 @@ class Plotter:
         ax = plt.axes(projection='3d')
         while not self.kill_event.is_set():
             try:
-                data = self.data_queue.get(timeout=1)
+                data = self.data_queue.get_nowait()
             except queue.Empty:
-                continue
-            if len(data) != 3:
-                # Expect that data has size 3
-                self.logger.warning(f"Datapoint {data} is not size 3, skipping")
+                plt.pause(0.1)
                 continue
 
-            ax.scatter3D(data[0], data[1], data[2], marker='.', color=self.color)
-        plt.show()
+            color = self.color
+            if len(data) == 4:
+                # If length of 4, use 4th point as color
+                color = data[3]
+            elif len(data) != 3:
+                # Expect that data has size 3
+                self.logger.warning(f"Datapoint {data} has invalid size, skipping")
+                continue
+
+            ax.scatter3D(data[0], data[1], data[2], marker='.', color=color)
+            plt.show(block=False)
 
