@@ -8,6 +8,8 @@ import logging
 import sys
 import configparser
 import argparse
+import time
+import numpy as np
 
 
 if __name__ == '__main__':
@@ -43,3 +45,11 @@ if __name__ == '__main__':
 
     # Start plotter
     plotter = plot.Plotter()
+
+    for i in range(100):
+        plotter.data_queue.put(np.random.rand(3))
+
+    while not plotter.data_queue.empty():
+        time.sleep(0.1)
+
+    plotter.kill()
