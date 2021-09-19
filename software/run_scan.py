@@ -3,9 +3,9 @@ run_scan.py: Runs the scanning action and generates a visualization
 """
 
 import plot
+import multiprocessing_logger
 
 import logging
-import sys
 import configparser
 import argparse
 import time
@@ -22,31 +22,27 @@ if __name__ == '__main__':
     cfg.read(args.config_file)
 
     # Setup logger
+    configurator = multiprocessing_logger.LoggerFromCfg(cfg)
+    logger_process = multiprocessing_logger.ProcessLogger(configurator)
+    multiprocessing_logger.configure_client_logger(logger_process.logger_queue)
+
     logger = logging.getLogger("main")
-    logger.setLevel(logging.DEBUG)
-
-    formatter = logging.Formatter("<%(levelname)s>\t%(asctime)s:\t%(message)s",
-                                  datefmt='%I:%M:%S %p')
-
-    if 'ConsoleLogger' in cfg:
-        cout_handler = logging.StreamHandler(sys.stdout)
-        cout_handler.setLevel(cfg['ConsoleLogger']['level'])
-        cout_handler.setFormatter(formatter)
-        logger.addHandler(cout_handler)
-
-    if 'FileLogger' in cfg:
-        file_handler = logging.FileHandler(cfg['FileLogger']['filename'])
-        file_handler.setLevel(cfg['FileLogger']['level'])
-        file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
 
     # Start main loop
     logger.info("Starting main loop")
 
     # Start plotter
-    plotter = plot.Plotter()
+    plotter_process = plot.Plotter(logger_queue=logger_process.logger_queue)
 
     for i in range(100):
-        plotter.data_queue.put(np.random.rand(3))
+        plotter_process.data_queue.put(np.random.rand(3) * 100)
         time.sleep(0.1)
+
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        # Kill everything
+        plotter_process.kill()
+        logger_process.kill()
 

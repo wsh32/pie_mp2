@@ -2,6 +2,8 @@
 plot.py: Thread safe 3D plotting and visualization
 """
 
+from multiprocessing_logger import configure_client_logger
+
 from multiprocessing import Process, Event, Queue
 import logging
 import queue
@@ -14,8 +16,9 @@ class Plotter:
     Creates a new thread that asynchronously plots the data coming from the data
     queue
     """
-    def __init__(self, color='blue'):
+    def __init__(self, logger_queue=None, color='blue'):
         self.logger = logging.getLogger("main")
+        self.logger_queue = logger_queue
 
         self.color = color
 
@@ -33,6 +36,10 @@ class Plotter:
         self.process.join()
 
     def _run(self):
+        # Setup logger
+        if self.logger_queue is not None:
+            configure_client_logger(self.logger_queue)
+
         fig = plt.figure()
         ax = plt.axes(projection='3d')
         while not self.kill_event.is_set():
@@ -51,6 +58,7 @@ class Plotter:
                 self.logger.warning(f"Datapoint {data} has invalid size, skipping")
                 continue
 
+            self.logger.debug(f"Plotting data:\t{data}")
             ax.scatter3D(data[0], data[1], data[2], marker='.', color=color)
             plt.show(block=False)
 
