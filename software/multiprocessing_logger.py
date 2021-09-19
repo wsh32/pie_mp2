@@ -22,7 +22,7 @@ class ProcessLogger:
 
     def _run(self):
         # Setup logger
-        self.logger = logging.getLogger()
+        self.logger = logging.getLogger("logger_out")
         self.configurator.configure(self.logger)
 
         while not self.kill_event.is_set():
@@ -30,6 +30,7 @@ class ProcessLogger:
                 record = self.logger_queue.get_nowait()
             except queue.Empty:
                 time.sleep(0.1)
+                continue
             if record is None:
                 break
             self.logger.handle(record)
