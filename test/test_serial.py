@@ -30,11 +30,15 @@ for device in devices:
 #ser = Serial('/dev/tty.usbserial-10', baudrate, timeout=1)
 
 with ser:
+    ser.reset_input_buffer()
+    ser.reset_output_buffer()
+    time.sleep(1)
+#    ser.write("ALSDKJ".encode("utf-8"))
     while True:
         x = 100
-        ser.write(x.to_bytes(1, byteorder='big'))
-    #    ser.write(b'd')
-    #    ser.write("ddddd".encode('utf-8'))
-    #    print(int.from_bytes(ser.read(), byteorder='big', signed=False))
+        #ser.write("\x10".encode("utf-8"))
+        ser.write(x.to_bytes(8, byteorder='big'))
+        print("WRITTEN")
         print(ser.read())
+        time.sleep(.2)
 
