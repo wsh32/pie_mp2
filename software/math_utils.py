@@ -51,3 +51,13 @@ def rotate_3d_z(rot):
         [0, 0, 1],
     ])
 
+
+def dist_to_points(dist, theta, phi):
+    """Returns the 3D point for the corresponding length and angle values
+    Inputs:
+        dist: Distance from the sensor to the object, in inches
+        theta: Pitch angle of the sensor, in radians
+        phi: Yaw angle of the sensor, in radians
+    """
+
+    return (dist .* [cos(theta) * sin(phi),  cos(theta) * cos(phi),  sin(theta)])
