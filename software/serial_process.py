@@ -75,12 +75,14 @@ class SerialProcess:
         while not self.kill_event.is_set() and not initialized:
             echo_num = 100
             echo_msg = format_serial_output(0, echo_num, 0, 0)
+            logging.info(f"Write message: {echo_msg}")
             self.device.write(echo_msg)
 
             time.sleep(0.1)
 
             while self.device.in_waiting > 0:
                 read = self.device.read(1)
+                logging.info(f"Read message: {read}")
                 if int.from_bytes(read, "big") == echo_num + 1:
                     # Read rest of message and reset
                     self.device.reset_input_buffer()
@@ -92,18 +94,23 @@ class SerialProcess:
 
         while not self.kill_event.is_set():
             try:
-                self.device.write(self.write_queue.get_nowait())
+                message = self.write_queue.get_nowait()
+                self.device.write(message)
+                logging.info(f"Wrote message: {message}")
             except queue.Empty:
                 pass
 
             if self.device.in_waiting > 0:
-                self.read_queue.put(self.device.read(8))
+                message = self.device.read(8)
+                logging.info(f"Read message: {list(message)}")
+                self.read_queue.put(message)
+
+        self.device.close()
 
     def kill(self):
         self.logger.info("Killing serial process")
         self.kill_event.set()
         self.process.join()
-        self.device.close()
 
 
 def uint16_to_uint8_2(uint16):

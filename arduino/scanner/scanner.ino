@@ -13,6 +13,10 @@ uint16_t current_reading = 0;
 CommInput input;
 CommOutput output;
 
+unsigned long last_read_timestamp_ms = 0;
+unsigned long time_delay = 1000;
+bool waiting_send = false;
+
 void setup() {
   pinMode(13, OUTPUT);
   digitalWrite(13, LOW);
@@ -29,26 +33,24 @@ void setup() {
   }
 }
 
-uint16_t last_read_timestamp_ms = 0;
-uint16_t time_delay = 1000;
-bool waiting_send = false;
-
 void loop() {
   if (Serial.available()) {
-    last_read_timestamp_ms = millis();
-    waiting_send = true;
+    if (!waiting_send) {
+      last_read_timestamp_ms = millis();
+      waiting_send = true;
+    }
 
     size_t bytes_read = Serial.readBytes(input_buff, READ_LEN);
     if (!parseInput(input_buff, &input)) {
       // No errors currently reported
     }
 
-    led ^= 1;
+    led = waiting_send;
     digitalWrite(13, led);
   }
 
   // TODO: Come up with a better way of determining when there is a valid datapoint to send
-  if (waiting_send && millis() - last_read_timestamp_ms > time_delay) {
+  if (((millis() - last_read_timestamp_ms) > time_delay) && waiting_send) {
     output.echo = input.echo + 1;
     output.led_status = led;
     output.distance_measurement = current_reading;

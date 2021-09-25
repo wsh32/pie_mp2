@@ -47,8 +47,9 @@ def run_path_sweep(horizontal_samples, horizontal_left_bound,
             yaw_cmd_rad = np.deg2rad(yaw_cmd)
 
             dist_m = math_utils.sharp_ir_raw_to_distance(read_dist)
-            plot_data_queue.put(math_utils.polar_to_cartesian(
-                dist_m, pitch_cmd_rad, yaw_cmd_rad))
+            xyz = math_utils.polar_to_cartesian(dist_m, pitch_cmd_rad,
+                                                yaw_cmd_rad)
+            plot_data_queue.put(xyz)
 
         direction = not direction
 
