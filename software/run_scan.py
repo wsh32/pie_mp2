@@ -35,7 +35,7 @@ def run_path_sweep(horizontal_samples, horizontal_left_bound,
 
             logger.info(f"Sending serial command: {pitch_cmd}\t{yaw_cmd}")
             serial_write_queue.put(
-                serial_process.format_serial_output(0, 0, yaw_cmd, pitch_cmd))
+                serial_process.format_serial_output(1, 0, yaw_cmd, pitch_cmd))
 
             read_echo, read_led, read_dist = serial_process.parse_serial_input(
                 serial_read_queue.get())

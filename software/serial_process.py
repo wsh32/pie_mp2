@@ -66,6 +66,7 @@ class SerialProcess:
             self.port = find_arduino_port()
 
         self.device = serial.Serial(self.port, self.baudrate)
+        logging.info(f"Opening serial device on {self.port}")
         # flush all serial data
         self.device.reset_input_buffer()
         self.device.reset_output_buffer()
@@ -83,7 +84,7 @@ class SerialProcess:
             while self.device.in_waiting > 0:
                 read = self.device.read(1)
                 logging.info(f"Read message: {read}")
-                if int.from_bytes(read, "big") == echo_num + 1:
+                if int.from_bytes(read, "big") == echo_num:
                     # Read rest of message and reset
                     self.device.reset_input_buffer()
                     initialized = True

@@ -8,7 +8,7 @@
 #define READ_LEN 8
 #define WRITE_LEN 8
 
-#define TIME_DELAY 2000
+#define TIME_DELAY 200
 
 #define BUFF_SIZE 10
 

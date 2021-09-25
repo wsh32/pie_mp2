@@ -8,6 +8,7 @@ uint16_t sample_buffer[BUFF_SIZE];
 size_t buffer_index = 0;  // Current buffer index (buffer_index - 1 = index of last inserted value)
 
 bool led = false;
+bool enabled = false;
 uint16_t current_reading = 0;
 
 CommInput input;
@@ -33,6 +34,10 @@ void setup() {
 }
 
 void loop() {
+  enabled = (input.cmd == 1);
+  led = enabled;
+  digitalWrite(13, led);
+
   if (Serial.available()) {
     if (!waiting_send) {
       last_read_timestamp_ms = millis();
@@ -43,14 +48,11 @@ void loop() {
     if (!parseInput(input_buff, &input)) {
       // No errors currently reported
     }
-
-    led = waiting_send;
-    digitalWrite(13, led);
   }
 
   // TODO: Come up with a better way of determining when there is a valid datapoint to send
   if (((millis() - last_read_timestamp_ms) > TIME_DELAY) && waiting_send) {
-    output.echo = input.echo + 1;
+    output.echo = input.echo;
     output.led_status = led;
     output.distance_measurement = current_reading;
     if (encodeOutput(output, output_buff, WRITE_LEN)) {
@@ -60,13 +62,17 @@ void loop() {
     waiting_send = false;
   }
 
-  servo_yaw.write(input.yaw_cmd);
-  servo_pitch.write(input.pitch_cmd);
+  if (enabled) {
+    servo_yaw.write(input.yaw_cmd);
+    servo_pitch.write(input.pitch_cmd);
+  }
   
   // Collect sample
   uint16_t ir_sample = analogRead(IR);
   // Add to ring buffer
   sample_buffer[buffer_index] = ir_sample;
+  buffer_index += 1;
+  buffer_index %= BUFF_SIZE;
 
   // Rolling average ring buffer
   uint16_t average = 0;
