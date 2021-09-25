@@ -42,11 +42,12 @@ class Plotter:
 
         fig = plt.figure()
         ax = plt.axes(projection='3d')
+        ax.set_aspect('equal')
         while not self.kill_event.is_set():
             try:
                 data = self.data_queue.get_nowait()
             except queue.Empty:
-                plt.pause(0.1)
+                plt.pause(0.01)
                 continue
 
             color = self.color

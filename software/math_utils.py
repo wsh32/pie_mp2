@@ -13,9 +13,9 @@ def polar_to_cartesian(dist, pitch, yaw):
         yaw: Yaw angle of the sensor, in radians
     """
 
-    return (dist * np.array([cos(pitch) * sin(yaw),
-                             cos(pitch) * cos(yaw),
-                             sin(pitch)]))
+    return (dist * np.array([np.cos(pitch) * np.sin(yaw),
+                             np.cos(pitch) * np.cos(yaw),
+                             np.sin(pitch)]))
 
 
 def sharp_ir_raw_to_distance(raw_measurement):

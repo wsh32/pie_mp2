@@ -28,8 +28,16 @@ void setup() {
     sample_buffer[i] = 0;
   }
 }
+
+uint16_t last_read_timestamp_ms = 0;
+uint16_t time_delay = 1000;
+bool waiting_send = false;
+
 void loop() {
   if (Serial.available()) {
+    last_read_timestamp_ms = millis();
+    waiting_send = true;
+
     size_t bytes_read = Serial.readBytes(input_buff, READ_LEN);
     if (!parseInput(input_buff, &input)) {
       // No errors currently reported
@@ -37,19 +45,22 @@ void loop() {
 
     led ^= 1;
     digitalWrite(13, led);
-    
+  }
+
+  // TODO: Come up with a better way of determining when there is a valid datapoint to send
+  if (waiting_send && millis() - last_read_timestamp_ms > time_delay) {
     output.echo = input.echo + 1;
     output.led_status = led;
-    output.distance_measurement = 3855;
+    output.distance_measurement = current_reading;
     if (encodeOutput(output, output_buff, WRITE_LEN)) {
       Serial.write(output_buff, WRITE_LEN);
     }
+
+    waiting_send = false;
   }
 
   servo_yaw.write(input.yaw_cmd);
   servo_pitch.write(input.pitch_cmd);
-
-  // TODO: wait for servo to reach position
   
   // Collect sample
   uint16_t ir_sample = analogRead(IR);
