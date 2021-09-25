@@ -8,6 +8,18 @@ from threading import Lock
 import struct
 
 
+arduino_ids = ((0x2341, 0x0043), (0x2341, 0x0001),
+               (0x2A03, 0x0043), (0x2341, 0x0243),
+               (0x0403, 0x6001), (0x1A86, 0x7523))
+
+
+def find_arduino_port():
+    devices = list_ports.comports()
+    for device in devices:
+        if (device.vid, device.pid) in arduino_ids:
+            return device.device
+
+
 class Device:
     def __init__(self, autodetect, baudrate, port=None):
         self.read_lock = Lock()
@@ -23,8 +35,6 @@ class Device:
             self._ser.port = list(ports[0])[0]
         else:
             self._ser.port = port
-
-        self._ser.open()
 
     def write(self, data):
         with self.write_lock:
@@ -49,14 +59,15 @@ class Device:
         self._ser.open()
 
     def flush_input(self):
-        self._ser.flushInput()
+        self._ser.reset_input_buffer()
 
     def flush_output(self):
-        self._ser.flushOutput()
+        self._ser.reset_output_buffer()
 
     def flush_all(self):
         self._ser.flush()
 
+    @property
     def in_waiting(self):
-        return self._ser.in_waiting()
+        return self._ser.in_waiting
 

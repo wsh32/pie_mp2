@@ -1,5 +1,5 @@
 """
-plot.py: Thread safe 3D plotting and visualization
+plot.py: Multiprocessing compatible 3D plotting and visualization
 """
 
 from multiprocessing_logger import configure_client_logger
@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 class Plotter:
     """
-    Creates a new thread that asynchronously plots the data coming from the data
+    Creates a new process that asynchronously plots the data coming from the data
     queue
     """
     def __init__(self, logger_queue=None, color='blue'):
@@ -27,11 +27,11 @@ class Plotter:
 
         self.process = Process(target=self._run)
 
-        self.logger.info("Starting plotter thread")
+        self.logger.info("Starting plotter process")
         self.process.start()
 
     def kill(self):
-        self.logger.info("Killing plotter thread")
+        self.logger.info("Killing plotter process")
         self.kill_event.set()
         self.process.join()
 

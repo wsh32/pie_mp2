@@ -1,0 +1,18 @@
+message_tx:
+  hello:
+    id: 0
+    bytes: 8
+    signals:
+      length: 8
+      scale: 1
+      offset: 0
+
+message_rx:
+  hello:
+    id: 0
+    bytes: 8
+    signals:
+      length: 8
+      scale: 1
+      offset: 0
+

@@ -35,10 +35,19 @@ with ser:
     time.sleep(1)
 #    ser.write("ALSDKJ".encode("utf-8"))
     while True:
-        x = 100
-        #ser.write("\x10".encode("utf-8"))
-        ser.write(x.to_bytes(8, byteorder='big'))
-        print("WRITTEN")
-        print(ser.read())
-        time.sleep(.2)
+        echo = 40
+        yaw_cmd = 80
+        pitch_cmd = 40
+        d3 = yaw_cmd >> 8
+        d4 = yaw_cmd & 0x00ff
+        d5 = pitch_cmd >> 8
+        d6 = pitch_cmd & 0x00ff
+        data = [16, echo, d3, d4, 0, 0, 0, 0]
+#        ser.write(x.to_bytes(8, 'big'))
+        ser.write(data)
+        print(f"WRITTEN\t{data}")
+        while ser.in_waiting > 0:
+            read_data = ser.read(8)
+            print(list(read_data))
+        time.sleep(0.1)
 

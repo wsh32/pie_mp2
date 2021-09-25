@@ -25,6 +25,8 @@ class ProcessLogger:
         self.logger = logging.getLogger("logger_out")
         self.configurator.configure(self.logger)
 
+        self.logger.info("Starting logger process")
+
         while not self.kill_event.is_set():
             try:
                 record = self.logger_queue.get_nowait()
