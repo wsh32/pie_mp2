@@ -14,7 +14,6 @@ CommInput input;
 CommOutput output;
 
 unsigned long last_read_timestamp_ms = 0;
-unsigned long time_delay = 1000;
 bool waiting_send = false;
 
 void setup() {
@@ -50,7 +49,7 @@ void loop() {
   }
 
   // TODO: Come up with a better way of determining when there is a valid datapoint to send
-  if (((millis() - last_read_timestamp_ms) > time_delay) && waiting_send) {
+  if (((millis() - last_read_timestamp_ms) > TIME_DELAY) && waiting_send) {
     output.echo = input.echo + 1;
     output.led_status = led;
     output.distance_measurement = current_reading;
@@ -81,8 +80,8 @@ void loop() {
 bool parseInput(char* input, CommInput* buff) {
   buff->cmd = input[0];
   buff->echo = input[1];
-  buff->yaw_cmd = (input[2] << 8) + input[3];
-  buff->pitch_cmd = (input[4] << 8) + input[5];
+  buff->yaw_cmd = input[2];
+  buff->pitch_cmd = input[3];
   return true;
 }
 

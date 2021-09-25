@@ -125,9 +125,7 @@ def uint8_2_to_uint16(uint8_1, uint8_2):
 
 
 def format_serial_output(cmd, echo, yaw_cmd, pitch_cmd):
-    yaw_cmd_1, yaw_cmd_2 = uint16_to_uint8_2(yaw_cmd)
-    pitch_cmd_1, pitch_cmd_2 = uint16_to_uint8_2(pitch_cmd)
-    return [cmd, echo, yaw_cmd_1, yaw_cmd_2, pitch_cmd_1, pitch_cmd_2]
+    return [cmd, echo, yaw_cmd, pitch_cmd]
 
 
 def parse_serial_input(serial_input):

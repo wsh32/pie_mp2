@@ -8,6 +8,8 @@
 #define READ_LEN 8
 #define WRITE_LEN 8
 
+#define TIME_DELAY 2000
+
 #define BUFF_SIZE 10
 
 #include <Servo.h>
@@ -18,8 +20,8 @@ Servo servo_pitch;
 struct CommInput {
   uint8_t cmd;
   uint8_t echo;
-  uint16_t yaw_cmd;
-  uint16_t pitch_cmd;
+  uint8_t yaw_cmd;
+  uint8_t pitch_cmd;
 };
 
 struct CommOutput {
