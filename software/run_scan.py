@@ -17,13 +17,16 @@ import numpy as np
 def run_path_sweep(horizontal_samples, horizontal_left_bound,
                    horizontal_right_bound, vertical_samples,
                    vertical_top_bound, vertical_bottom_bound,
-                   serial_write_queue, serial_read_queue, plot_data_queue):
+                   serial_write_queue, serial_read_queue, plot_data_queue,
+                   max_distance_plot=15):
     x = np.linspace(horizontal_left_bound, horizontal_right_bound,
                     horizontal_samples)
     y = np.linspace(vertical_top_bound, vertical_bottom_bound,
                     vertical_samples)
 
     direction = False  # False = left to right, True = right to left
+    data = []
+    data.append(("Raw", "Pitch", "Yaw"))
     for y_index, y_pos in enumerate(y):
         pitch_cmd = int(y_pos)
         for x_index, x_pos in enumerate(x):
@@ -46,10 +49,12 @@ def run_path_sweep(horizontal_samples, horizontal_left_bound,
             pitch_cmd_rad = np.deg2rad(pitch_cmd)
             yaw_cmd_rad = np.deg2rad(yaw_cmd)
 
-            dist_m = math_utils.sharp_ir_raw_to_distance(read_dist)
-            xyz = math_utils.polar_to_cartesian(dist_m, pitch_cmd_rad,
-                                                yaw_cmd_rad)
-            plot_data_queue.put(xyz)
+            data.append((read_dist, pitch_cmd, yaw_cmd))
+            dist_in = math_utils.sharp_ir_raw_to_distance(read_dist)
+            if dist_in < max_distance_plot:
+                xyz = math_utils.polar_to_cartesian(dist_in, pitch_cmd_rad,
+                                                    yaw_cmd_rad)
+                plot_data_queue.put(xyz)
 
         direction = not direction
 
@@ -92,12 +97,23 @@ if __name__ == '__main__':
             vertical_top_bound = int(cfg['Path']['vertical_top_bound'])
             vertical_bottom_bound = int(cfg['Path']['vertical_bottom_bound'])
 
-            run_path_sweep(horizontal_samples, horizontal_left_bound,
-                           horizontal_right_bound, vertical_samples,
-                           vertical_top_bound, vertical_bottom_bound,
-                           arduino_process.write_queue,
-                           arduino_process.read_queue,
-                           plotter_process.data_queue)
+            if 'Plot' in cfg:
+                max_distance_plot = cfg['Plot']['max_distance']
+
+                run_path_sweep(horizontal_samples, horizontal_left_bound,
+                               horizontal_right_bound, vertical_samples,
+                               vertical_top_bound, vertical_bottom_bound,
+                               arduino_process.write_queue,
+                               arduino_process.read_queue,
+                               plotter_process.data_queue,
+                               max_distance_plot=max_distance_plot)
+            else:
+                run_path_sweep(horizontal_samples, horizontal_left_bound,
+                               horizontal_right_bound, vertical_samples,
+                               vertical_top_bound, vertical_bottom_bound,
+                               arduino_process.write_queue,
+                               arduino_process.read_queue,
+                               plotter_process.data_queue)
 
     try:
         while True:

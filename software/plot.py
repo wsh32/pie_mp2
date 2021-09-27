@@ -42,6 +42,12 @@ class Plotter:
 
         fig = plt.figure()
         ax = plt.axes(projection='3d')
+        min_x = None
+        max_x = None
+        min_y = None
+        max_y = None
+        min_z = None
+        max_z = None
         # ax.set_aspect('equal')
         while not self.kill_event.is_set():
             try:
@@ -58,6 +64,25 @@ class Plotter:
                 # Expect that data has size 3
                 self.logger.warning(f"Datapoint {data} has invalid size, skipping")
                 continue
+
+            if min_x is not None:
+                min_x = min(min_x, data[0])
+                max_x = max(max_x, data[0])
+                min_y = min(min_y, data[1])
+                max_y = max(max_y, data[1])
+                min_z = min(min_z, data[2])
+                max_z = max(max_z, data[2])
+            else:
+                min_x = data[0]
+                max_x = data[0]
+                min_y = data[1]
+                max_y = data[1]
+                min_z = data[2]
+                max_z = data[2]
+
+            aspect_ratio = (max_x - min_x, max_y - min_y, max_z - min_z)
+            self.logger.warning(f"New aspect ratio: {aspect_ratio}")
+            ax.set_box_aspect(aspect_ratio)
 
             self.logger.debug(f"Plotting data:\t{data}")
             ax.scatter3D(data[0], data[1], data[2], marker='.', color=color)

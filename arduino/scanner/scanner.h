@@ -8,9 +8,9 @@
 #define READ_LEN 8
 #define WRITE_LEN 8
 
-#define TIME_DELAY 200
+#define TIME_DELAY 500
 
-#define BUFF_SIZE 10
+#define BUFF_SIZE 20
 
 #include <Servo.h>
 
