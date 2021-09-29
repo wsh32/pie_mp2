@@ -4,9 +4,6 @@
 char input_buff[READ_LEN];
 char output_buff[WRITE_LEN];
 
-uint16_t sample_buffer[BUFF_SIZE];
-size_t buffer_index = 0;  // Current buffer index (buffer_index - 1 = index of last inserted value)
-
 bool led = false;
 bool enabled = false;
 uint16_t current_reading = 0;
@@ -27,10 +24,6 @@ void setup() {
   servo_yaw.attach(SERVO_YAW);
   servo_pitch.attach(SERVO_PITCH);
 
-  // clear sample buffer
-  for (int i = 0; i < BUFF_SIZE; i++) {
-    sample_buffer[i] = 0;
-  }
 }
 
 void loop() {
@@ -52,8 +45,8 @@ void loop() {
 
   if (((millis() - last_read_timestamp_ms) > TIME_DELAY) && waiting_send) {
     current_reading = 0;
-    for (int i = 0; i < BUFF_SIZE; i++) {
-      current_reading += float(analogRead(IR)) / BUFF_SIZE;
+    for (int i = 0; i < NUM_AVERAGE; i++) {
+      current_reading += float(analogRead(IR)) / NUM_AVERAGE;
     }
 
     output.echo = input.echo;

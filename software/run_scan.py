@@ -60,12 +60,13 @@ def run_path_sweep(horizontal_samples, horizontal_left_bound,
             yaw_cmd_rad = np.deg2rad(yaw_cmd)
 
             dist_in = math_utils.sharp_ir_raw_to_distance(read_dist)
-            logger.info(f"Calculated distance: {dist_in}, Min distance: {min_distance_plot}")
 
-            if dist_in > min_distance_plot and dist_in < max_distance_plot:
-                xyz = math_utils.polar_to_cartesian(dist_in, pitch_cmd_rad,
-                                                    yaw_cmd_rad)
-                plot_data_queue.put(xyz)
+            x_read, y_read, z_read = math_utils.polar_to_cartesian(
+                dist_in, pitch_cmd_rad, yaw_cmd_rad)
+
+            logger.info(f"Position: {x_read}\t{y_read}\t{z_read}")
+            if y_read > min_distance_plot and y_read < max_distance_plot:
+                plot_data_queue.put((x_read, y_read, z_read))
 
         direction = not direction
 

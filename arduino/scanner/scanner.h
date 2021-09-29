@@ -10,8 +10,7 @@
 
 #define TIME_DELAY 1
 
-#define BUFF_SIZE 10
-#define LPF_ALPHA 0.99
+#define NUM_AVERAGE 10
 
 #include <Servo.h>
 
