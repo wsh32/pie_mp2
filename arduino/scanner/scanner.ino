@@ -50,8 +50,12 @@ void loop() {
     }
   }
 
-  // TODO: Come up with a better way of determining when there is a valid datapoint to send
   if (((millis() - last_read_timestamp_ms) > TIME_DELAY) && waiting_send) {
+    current_reading = 0;
+    for (int i = 0; i < BUFF_SIZE; i++) {
+      current_reading += float(analogRead(IR)) / BUFF_SIZE;
+    }
+
     output.echo = input.echo;
     output.led_status = led;
     output.distance_measurement = current_reading;
@@ -66,21 +70,6 @@ void loop() {
     servo_yaw.write(input.yaw_cmd);
     servo_pitch.write(input.pitch_cmd);
   }
-  
-  // Collect sample
-  uint16_t ir_sample = analogRead(IR);
-  // Add to ring buffer
-  sample_buffer[buffer_index] = ir_sample;
-  buffer_index += 1;
-  buffer_index %= BUFF_SIZE;
-
-  // Rolling average ring buffer
-  uint16_t average = 0;
-  for (int i = 0; i < BUFF_SIZE; i++) {
-    average += sample_buffer[i] / BUFF_SIZE;
-  }
-
-  current_reading = average;
 }
 
 bool parseInput(char* input, CommInput* buff) {

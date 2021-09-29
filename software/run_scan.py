@@ -18,15 +18,14 @@ def run_path_sweep(horizontal_samples, horizontal_left_bound,
                    horizontal_right_bound, vertical_samples,
                    vertical_top_bound, vertical_bottom_bound,
                    serial_write_queue, serial_read_queue, plot_data_queue,
-                   max_distance_plot=15):
+                   max_distance_plot=15, yaw_calibration=None,
+                   pitch_calibration=None):
     x = np.linspace(horizontal_left_bound, horizontal_right_bound,
                     horizontal_samples)
     y = np.linspace(vertical_top_bound, vertical_bottom_bound,
                     vertical_samples)
 
     direction = False  # False = left to right, True = right to left
-    data = []
-    data.append(("Raw", "Pitch", "Yaw"))
     for y_index, y_pos in enumerate(y):
         pitch_cmd = int(y_pos)
         for x_index, x_pos in enumerate(x):
@@ -36,9 +35,20 @@ def run_path_sweep(horizontal_samples, horizontal_left_bound,
                 x_index_corrected = horizontal_samples - x_index - 1
             yaw_cmd = int(x[x_index_corrected])
 
-            logger.info(f"Sending serial command: {pitch_cmd}\t{yaw_cmd}")
+            logger.info(f"Current command: {pitch_cmd}\t{yaw_cmd}")
+
+            yaw_cmd_calibrated = yaw_cmd
+            pitch_cmd_calibrated = pitch_cmd
+            if yaw_calibration:
+                yaw_cmd_calibrated = int(math_utils.apply_motor_calibration(
+                    yaw_cmd, *yaw_calibration))
+            if pitch_calibration:
+                pitch_cmd_calibrated = int(math_utils.apply_motor_calibration(
+                    pitch_cmd, *pitch_calibration))
+
             serial_write_queue.put(
-                serial_process.format_serial_output(1, 0, yaw_cmd, pitch_cmd))
+                serial_process.format_serial_output(
+                    1, 0, yaw_cmd_calibrated, pitch_cmd_calibrated))
 
             read_echo, read_led, read_dist = serial_process.parse_serial_input(
                 serial_read_queue.get())
@@ -49,8 +59,9 @@ def run_path_sweep(horizontal_samples, horizontal_left_bound,
             pitch_cmd_rad = np.deg2rad(pitch_cmd)
             yaw_cmd_rad = np.deg2rad(yaw_cmd)
 
-            data.append((read_dist, pitch_cmd, yaw_cmd))
             dist_in = math_utils.sharp_ir_raw_to_distance(read_dist)
+            logger.info(f"Calculated distance: {dist_in}")
+
             if dist_in < max_distance_plot:
                 xyz = math_utils.polar_to_cartesian(dist_in, pitch_cmd_rad,
                                                     yaw_cmd_rad)
@@ -84,7 +95,7 @@ if __name__ == '__main__':
             cfg, logger_queue=logger_process.logger_queue)
 
     # Start plotter
-    plotter_process = plot.Plotter(logger_queue=logger_process.logger_queue)
+    plotter_process = plot.Plotter3D(logger_queue=logger_process.logger_queue)
 
     # Zhu Li! Do the thing!
     if 'Path' in cfg:
@@ -97,8 +108,22 @@ if __name__ == '__main__':
             vertical_top_bound = int(cfg['Path']['vertical_top_bound'])
             vertical_bottom_bound = int(cfg['Path']['vertical_bottom_bound'])
 
+            if 'YawCalibration' in cfg:
+                yaw_calibration = (int(cfg['YawCalibration']['left']),
+                                   int(cfg['YawCalibration']['middle']),
+                                   bool(cfg['YawCalibration']['invert']))
+            else:
+                yaw_calibration = None
+
+            if 'PitchCalibration' in cfg:
+                pitch_calibration = (int(cfg['PitchCalibration']['up']),
+                                     int(cfg['PitchCalibration']['middle']),
+                                     bool(cfg['PitchCalibration']['invert']))
+            else:
+                pitch_calibration = None
+
             if 'Plot' in cfg:
-                max_distance_plot = cfg['Plot']['max_distance']
+                max_distance_plot = float(cfg['Plot']['max_distance'])
 
                 run_path_sweep(horizontal_samples, horizontal_left_bound,
                                horizontal_right_bound, vertical_samples,
@@ -106,14 +131,18 @@ if __name__ == '__main__':
                                arduino_process.write_queue,
                                arduino_process.read_queue,
                                plotter_process.data_queue,
-                               max_distance_plot=max_distance_plot)
+                               max_distance_plot=max_distance_plot,
+                               yaw_calibration=yaw_calibration,
+                               pitch_calibration=pitch_calibration)
             else:
                 run_path_sweep(horizontal_samples, horizontal_left_bound,
                                horizontal_right_bound, vertical_samples,
                                vertical_top_bound, vertical_bottom_bound,
                                arduino_process.write_queue,
                                arduino_process.read_queue,
-                               plotter_process.data_queue)
+                               plotter_process.data_queue,
+                               yaw_calibration=yaw_calibration,
+                               pitch_calibration=pitch_calibration)
 
     try:
         while True:
