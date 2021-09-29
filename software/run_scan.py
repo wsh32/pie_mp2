@@ -18,8 +18,8 @@ def run_path_sweep(horizontal_samples, horizontal_left_bound,
                    horizontal_right_bound, vertical_samples,
                    vertical_top_bound, vertical_bottom_bound,
                    serial_write_queue, serial_read_queue, plot_data_queue,
-                   max_distance_plot=15, yaw_calibration=None,
-                   pitch_calibration=None):
+                   min_distance_plot=11, max_distance_plot=15,
+                   yaw_calibration=None, pitch_calibration=None):
     x = np.linspace(horizontal_left_bound, horizontal_right_bound,
                     horizontal_samples)
     y = np.linspace(vertical_top_bound, vertical_bottom_bound,
@@ -60,9 +60,9 @@ def run_path_sweep(horizontal_samples, horizontal_left_bound,
             yaw_cmd_rad = np.deg2rad(yaw_cmd)
 
             dist_in = math_utils.sharp_ir_raw_to_distance(read_dist)
-            logger.info(f"Calculated distance: {dist_in}")
+            logger.info(f"Calculated distance: {dist_in}, Min distance: {min_distance_plot}")
 
-            if dist_in < max_distance_plot:
+            if dist_in > min_distance_plot and dist_in < max_distance_plot:
                 xyz = math_utils.polar_to_cartesian(dist_in, pitch_cmd_rad,
                                                     yaw_cmd_rad)
                 plot_data_queue.put(xyz)
@@ -123,6 +123,7 @@ if __name__ == '__main__':
                 pitch_calibration = None
 
             if 'Plot' in cfg:
+                min_distance_plot = float(cfg['Plot']['min_distance'])
                 max_distance_plot = float(cfg['Plot']['max_distance'])
 
                 run_path_sweep(horizontal_samples, horizontal_left_bound,
@@ -131,6 +132,7 @@ if __name__ == '__main__':
                                arduino_process.write_queue,
                                arduino_process.read_queue,
                                plotter_process.data_queue,
+                               min_distance_plot=min_distance_plot,
                                max_distance_plot=max_distance_plot,
                                yaw_calibration=yaw_calibration,
                                pitch_calibration=pitch_calibration)
