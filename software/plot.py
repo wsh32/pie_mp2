@@ -133,6 +133,8 @@ class Plotter2D:
         if self.logger_queue is not None:
             configure_client_logger(self.logger_queue)
 
+        plt.xlabel("Yaw angle (degrees)")
+        plt.ylabel("Distance (inches)")
         while not self.kill_event.is_set():
             try:
                 data = self.data_queue.get_nowait()
@@ -141,8 +143,6 @@ class Plotter2D:
                 continue
 
             color = self.color
-
-            self.logger.warning(f"New aspect ratio: {aspect_ratio}")
 
             self.logger.debug(f"Plotting data:\t{data}")
             plt.scatter(data[0], data[1], marker='.', color=color)

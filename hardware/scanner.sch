@@ -1,0 +1,276 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L MCU_Module:Arduino_UNO_R2 A1
+U 1 1 6153EF5E
+P 5750 3200
+F 0 "A1" H 6150 4150 50  0000 C CNN
+F 1 "Arduino_UNO_R2" H 6300 2150 50  0000 C CNN
+F 2 "Module:Arduino_UNO_R2" H 5750 3200 50  0001 C CIN
+F 3 "https://www.arduino.cc/en/Main/arduinoBoardUno" H 5750 3200 50  0001 C CNN
+	1    5750 3200
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR06
+U 1 1 61540B50
+P 5950 2100
+F 0 "#PWR06" H 5950 1950 50  0001 C CNN
+F 1 "+5V" H 5965 2273 50  0000 C CNN
+F 2 "" H 5950 2100 50  0001 C CNN
+F 3 "" H 5950 2100 50  0001 C CNN
+	1    5950 2100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5950 2100 5950 2200
+$Comp
+L power:GND #PWR05
+U 1 1 61541797
+P 5650 4500
+F 0 "#PWR05" H 5650 4250 50  0001 C CNN
+F 1 "GND" H 5655 4327 50  0000 C CNN
+F 2 "" H 5650 4500 50  0001 C CNN
+F 3 "" H 5650 4500 50  0001 C CNN
+	1    5650 4500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5650 4300 5650 4400
+Wire Wire Line
+	5650 4400 5750 4400
+Wire Wire Line
+	5850 4400 5850 4300
+Connection ~ 5650 4400
+Wire Wire Line
+	5650 4400 5650 4500
+Wire Wire Line
+	5750 4300 5750 4400
+Connection ~ 5750 4400
+Wire Wire Line
+	5750 4400 5850 4400
+$Comp
+L Connector:Conn_01x03_Female J1
+U 1 1 61542FD0
+P 7550 3300
+F 0 "J1" H 7578 3326 50  0000 L CNN
+F 1 "IR Sensor" H 7578 3235 50  0000 L CNN
+F 2 "" H 7550 3300 50  0001 C CNN
+F 3 "~" H 7550 3300 50  0001 C CNN
+	1    7550 3300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Motor:Motor_Servo M2
+U 1 1 61548887
+P 4600 3300
+F 0 "M2" H 4450 3500 50  0000 C CNN
+F 1 "PITCH_SERVO" H 4800 3100 50  0000 C CNN
+F 2 "" H 4600 3110 50  0001 C CNN
+F 3 "http://forums.parallax.com/uploads/attachments/46831/74481.png" H 4600 3110 50  0001 C CNN
+	1    4600 3300
+	-1   0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR09
+U 1 1 6154AC03
+P 7200 3700
+F 0 "#PWR09" H 7200 3450 50  0001 C CNN
+F 1 "GND" H 7205 3527 50  0000 C CNN
+F 2 "" H 7200 3700 50  0001 C CNN
+F 3 "" H 7200 3700 50  0001 C CNN
+	1    7200 3700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7200 3400 7350 3400
+Wire Wire Line
+	7000 3300 7350 3300
+$Comp
+L power:+5V #PWR07
+U 1 1 6154FEAA
+P 7000 3100
+F 0 "#PWR07" H 7000 2950 50  0001 C CNN
+F 1 "+5V" H 7015 3273 50  0000 C CNN
+F 2 "" H 7000 3100 50  0001 C CNN
+F 3 "" H 7000 3100 50  0001 C CNN
+	1    7000 3100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7000 3100 7000 3300
+$Comp
+L Device:C_Small C1
+U 1 1 61550D3D
+P 7000 3500
+F 0 "C1" H 6850 3550 50  0000 L CNN
+F 1 "10uF" H 6750 3450 50  0000 L CNN
+F 2 "" H 7000 3500 50  0001 C CNN
+F 3 "~" H 7000 3500 50  0001 C CNN
+	1    7000 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7200 3400 7200 3700
+Wire Wire Line
+	7000 3300 7000 3400
+Connection ~ 7000 3300
+$Comp
+L power:GND #PWR08
+U 1 1 6155255A
+P 7000 3700
+F 0 "#PWR08" H 7000 3450 50  0001 C CNN
+F 1 "GND" H 7005 3527 50  0000 C CNN
+F 2 "" H 7000 3700 50  0001 C CNN
+F 3 "" H 7000 3700 50  0001 C CNN
+	1    7000 3700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7000 3700 7000 3600
+Wire Wire Line
+	4900 3200 5250 3200
+Wire Wire Line
+	5250 3100 5150 3100
+$Comp
+L power:+5V #PWR01
+U 1 1 61559756
+P 5000 2250
+F 0 "#PWR01" H 5000 2100 50  0001 C CNN
+F 1 "+5V" H 5015 2423 50  0000 C CNN
+F 2 "" H 5000 2250 50  0001 C CNN
+F 3 "" H 5000 2250 50  0001 C CNN
+	1    5000 2250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5000 2250 5000 2450
+Wire Wire Line
+	5000 3300 4900 3300
+$Comp
+L power:GND #PWR04
+U 1 1 6155A7C5
+P 5000 3550
+F 0 "#PWR04" H 5000 3300 50  0001 C CNN
+F 1 "GND" H 5005 3377 50  0000 C CNN
+F 2 "" H 5000 3550 50  0001 C CNN
+F 3 "" H 5000 3550 50  0001 C CNN
+	1    5000 3550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5000 3550 5000 3400
+Wire Wire Line
+	5000 3400 4900 3400
+$Comp
+L power:GND #PWR02
+U 1 1 6155C697
+P 5000 2600
+F 0 "#PWR02" H 5000 2350 50  0001 C CNN
+F 1 "GND" H 5005 2427 50  0000 C CNN
+F 2 "" H 5000 2600 50  0001 C CNN
+F 3 "" H 5000 2600 50  0001 C CNN
+	1    5000 2600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5000 2600 5000 2550
+Wire Wire Line
+	5000 2550 4900 2550
+Wire Wire Line
+	5000 2450 4900 2450
+Wire Wire Line
+	5150 2350 4900 2350
+$Comp
+L Motor:Motor_Servo M1
+U 1 1 61544C9C
+P 4600 2450
+F 0 "M1" H 4450 2650 50  0000 C CNN
+F 1 "YAW_SERVO" H 4800 2250 50  0000 C CNN
+F 2 "" H 4600 2260 50  0001 C CNN
+F 3 "http://forums.parallax.com/uploads/attachments/46831/74481.png" H 4600 2260 50  0001 C CNN
+	1    4600 2450
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	5150 2350 5150 3100
+$Comp
+L power:+5V #PWR03
+U 1 1 61563A09
+P 5000 3100
+F 0 "#PWR03" H 5000 2950 50  0001 C CNN
+F 1 "+5V" H 5015 3273 50  0000 C CNN
+F 2 "" H 5000 3100 50  0001 C CNN
+F 3 "" H 5000 3100 50  0001 C CNN
+	1    5000 3100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5000 3100 5000 3300
+NoConn ~ 5250 3900
+NoConn ~ 5250 3800
+NoConn ~ 5250 3700
+NoConn ~ 5250 3600
+NoConn ~ 5250 3500
+NoConn ~ 5250 3400
+NoConn ~ 5250 3300
+NoConn ~ 5250 3000
+NoConn ~ 5250 2900
+NoConn ~ 5250 2800
+NoConn ~ 5250 2700
+NoConn ~ 5250 2600
+NoConn ~ 5650 2200
+NoConn ~ 5850 2200
+NoConn ~ 6250 2600
+NoConn ~ 6250 2800
+NoConn ~ 6250 3000
+NoConn ~ 6250 3300
+NoConn ~ 6250 3400
+NoConn ~ 6250 3500
+NoConn ~ 6250 3600
+NoConn ~ 6250 3700
+Wire Wire Line
+	6250 3200 6650 3200
+$Comp
+L Device:C_Small C2
+U 1 1 6156FFA2
+P 6650 3500
+F 0 "C2" H 6500 3550 50  0000 L CNN
+F 1 "2.2uF" H 6400 3450 50  0000 L CNN
+F 2 "" H 6650 3500 50  0001 C CNN
+F 3 "~" H 6650 3500 50  0001 C CNN
+	1    6650 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6650 3400 6650 3200
+Connection ~ 6650 3200
+Wire Wire Line
+	6650 3200 7350 3200
+$Comp
+L power:GND #PWR010
+U 1 1 61570E20
+P 6650 3700
+F 0 "#PWR010" H 6650 3450 50  0001 C CNN
+F 1 "GND" H 6655 3527 50  0000 C CNN
+F 2 "" H 6650 3700 50  0001 C CNN
+F 3 "" H 6650 3700 50  0001 C CNN
+	1    6650 3700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6650 3700 6650 3600
+$EndSCHEMATC
